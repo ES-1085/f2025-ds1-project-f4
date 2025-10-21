@@ -20,3 +20,4 @@ using the following format.
 - `population`: Total population for specific countries in a given year.
 - `histname`: Historically relevant event.
 - `historical_date`: The date of historically relevant event.
+- `region`: The region of specific countries.
