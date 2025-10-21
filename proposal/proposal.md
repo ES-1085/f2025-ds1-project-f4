@@ -1,14 +1,65 @@
 Project proposal
 ================
-Team name
+Fantastic 4
 
 ``` r
 library(tidyverse)
 library(broom)
+df <- read_csv("../data/vdem3.csv")
 ```
 
-## 1\. Introduction
+## 1. Introduction
 
-## 2\. Data
+This project deals with economy, democracy, and dictatorship.
+Specifically, we inquire on the relationship between countries’ economy
+and their regime. We ask how a country’s economy determines its regime
+measured in democracy and dictatorship continuum. We further ask
+specific questions:
 
-## 3\. Data analysis plan
+1)  How does the region mediate the relationship?
+2)  What historically relevant events one notices that affect both the
+    economy and regime?
+3)  Can it be that the regime determines the economy?
+
+To answer these questions, we use regime and economic indicators
+collected from the Varieties of Democracy (V-Dem) dataset and World
+Development Indicators (WDI) dataset of the World Bank, respectively.
+The V-Dem dataset provides us with five indices of democracy: polyarchy
+(or electoral), egalitarian, deliberative, liberal, and participatory
+democracy.
+
+To supplement this, the WDI dataset provides economic indicators using
+Gross Domestic Product per capita (GDP per capita). Finally, our working
+dataset includes 181 countries and their three-letter ID spanning from
+1960 to 2024, along with historically relevant events, their date, and
+region. Thus, each observation is a country’s regime and economic data
+in a given year.
+
+## 2. Data
+
+Text goes here. Place your data in the /data folder, and add dimensions
+and codebook to the README in that folder. Then print out the output of
+glimpse() or skim() of your data frame.
+
+``` r
+# Code goes here
+# Read in your data file
+# Print the output of glimpse() or skim()
+```
+
+## 3. Data analysis plan
+
+Text goes here. - What variables will you visualize to explore your
+research questions? - Will there be any other data that you need to find
+to help with your research question? - Very preliminary exploratory data
+analysis, including some summary statistics and visualizations, along
+with some explanation on how they help you learn more about your data.
+(You can add to these later as you work on your project.) - The data
+visualization(s) that you believe will be useful in exploring your
+question(s). (You can update these later as you work on your project.)
+
+``` r
+# Code goes here
+# Code to calculate summary statistics
+# Code for a visualization
+```
