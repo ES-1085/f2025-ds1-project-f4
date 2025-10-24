@@ -1,12 +1,15 @@
 ---
 title: "Project proposal"
-author: "Fantastic 4"
+author: "Fantastic 4 - RB, Keagan, Ryan, Bravo"
 output: github_document
 ---
 
 ```{r load-packages, message = FALSE}
 library(tidyverse)
 library(broom)
+# install.packages("skimr")
+library(skimr)
+library(stringr)
 df <- read_csv("../data/vdem3.csv")
 ```
 
@@ -24,25 +27,126 @@ To supplement this, the WDI dataset provides economic indicators using Gross Dom
 
 ## 2. Data
 
-Text goes here. Place your data in the /data folder, and add dimensions and codebook to the README in that folder. Then print out the output of glimpse() or skim() of your data frame.
+In this project, we use Varieties of Democracy (V-Dem) dataset and World Development Indicators (WDI) dataset of the World Bank. Because of the size of V-Dem dataset, we had to merge both the dataset outside Posit. The following shows how we do this.
 
-```{r}
-# Code goes here
-# Read in your data file
-# Print the output of glimpse() or skim()
+```{r preliminary-data-cleaning}
+# vdem2 <- vdem %>% 
+#   select(country_name,
+#          histname,
+#          historical_date,
+#          year,
+#          country_text_id,
+#          country_id,
+#          v2x_polyarchy,
+#          v2x_libdem,
+#          v2x_partipdem,
+#          v2x_delibdem,
+#          v2x_egaldem) 
+# 
+# install.packages("WDI")
+# install.packages("countrycode")  
+# library(WDI)
+# library(countrycode)
+# 
+# data <- WDI(
+#   country = "all",
+#   indicator = c(
+#     "NY.GDP.PCAP.CD",  
+#     "NY.GDP.MKTP.CD",  
+#     "SP.POP.TOTL",     
+#     "SI.POV.GINI"     
+#   ),
+#   start = 1960,
+#   end = 2024,
+#   extra = TRUE  
+# )
+# 
+# WDI_data <- data %>%
+#   rename(
+#     gdp_per_capita = NY.GDP.PCAP.CD,
+#     gdp = NY.GDP.MKTP.CD,
+#     population = SP.POP.TOTL,
+#     gini = SI.POV.GINI,
+#     iso3c = iso3c,
+#     region = region
+#   ) %>%
+#   mutate(
+#     continent = countrycode(iso3c, origin = "iso3c", destination = "continent")
+#   ) %>%
+#   select(year, country, iso3c, gdp_per_capita, gdp, population, gini, region, continent)
+# 
+# df <- right_join(vdem2, WDI_data, by = c("country_text_id", "year"))
+```
+
+We then rename variables in our main dataset df. 
+
+```{r renaming-variables}
+df <- df %>% 
+  rename(polyarchy = v2x_polyarchy, 
+         libdem = v2x_libdem, 
+         delibdem = v2x_delibdem,
+         partidem = v2x_partipdem,
+         egaldem = v2x_egaldem, 
+         countryid = country_text_id,
+         gdppc = gdp_per_capita
+         )
+```
+
+Here, we observe `r ncol(df)` variables and `r nrow(df)` observations.
+
+```{r glimpse}
+df %>% 
+  glimpse()
 ```
 
 ## 3. Data analysis plan
 
-Text goes here.
-- What variables will you visualize to explore your research questions?
-- Will there be any other data that you need to find to help with your research question?
-- Very preliminary exploratory data analysis, including some summary statistics and visualizations, along with some explanation on how they help you learn more about your data. (You can add to these later as you work on your project.)
-- The data visualization(s) that you believe will be useful in exploring your question(s). (You can update these later as you work on your project.)
+We plan to answer the research question using basic visualizations of correlations without considering covariates. To do this we use the following variables: `country`, `year`, `countryid`, `polyarchy`, `libdem`, `partipdem`, `delibdem`, `egaldem`, `gdp`, `gdppc`, `population`, `region`, `continent`, and `gini`.
 
+Most of our analyses will include three main variables: `year`, the measures of democracy (`polyarchy`, `libdem`, `partipdem`, `delibdem`, `egaldem`), and measures of economic development (`gdppc` and `gini``). 
+
+To further illustrate this, we plan to use the following visualizations:
+
+1. Time-series Plot - This will shows how the measures of democracy (`polyarchy`, `libdem`, `partipdem`, `delibdem`, `egaldem`) and measures of economic development (`gdppc` and `gini`) evolved through time. In the same visualization, we will also include lines that describe any particular events that explains the increase or drop of both measures. We can also facet this to show how the relationship differs (if at all) with respect to `region`.
+
+2. Animated Maps - This is another way to show how the measures of democracy (`polyarchy`, `libdem`, `partipdem`, `delibdem`, `egaldem`) and measures of economic development (`gdppc` and `gini`) evolved through time while also considering the `country` in a map. 
+
+3. Scatter Plot and Heatmaps- This plot is the most important of all. This finally shows the bivariate relationship between economic development and democracy. One way to show this is by transforming the x-axis to the percentile of countries' economic development and y-axis to the percentile of countries in terms of a measure of democracy. We will then facet them in terms of the measures of democracy (`polyarchy`, `libdem`, `partipdem`, `delibdem`, `egaldem`). This transformation is necessary, because as you will see below, the distribution of the economic indicator is highly skewed (although we may also use the log function).
+
+### Summary Statistics
+
+```{r summary-statistics}
+df %>% 
+  skim(libdem, delibdem, partidem, egaldem, gdppc, gdp, population, gini)
+```
+
+### Preliminary Exploratory Data Analysis
+
+Here, we try to visualize the relationship that directly answers our main research question. As you may see, there's a positive relationship between `gdppc` and `polyarchy`, suggesting that at least in one indicator of democracy, economy makes democracy (assuming that the correlation is grounded in a sound theory). 
 
 ```{r}
-# Code goes here
-# Code to calculate summary statistics
-# Code for a visualization
+df_percentiles <- df %>%
+  mutate(
+    gdp_percentile = percent_rank(gdppc),
+    polyarchy_percentile = percent_rank(polyarchy)
+  )
+
+ggplot(df_percentiles, aes(x = gdp_percentile, y = polyarchy_percentile)) +
+  geom_bin2d(bins = 35) +
+  scale_fill_viridis_c() + 
+  theme_gray()
+
+ggplot(df_percentiles, aes(x = gdp_percentile, y = polyarchy_percentile)) +
+  geom_point(alpha = 0.1, size = 1) +
+  geom_smooth(method = lm, color = "black") +
+  theme_minimal() 
+
+ggplot(df_percentiles, aes(x = gdp_percentile, y = polyarchy_percentile, color = region)) +
+  geom_point(alpha = 0.5, size = 1) +
+  geom_smooth(method = lm) +
+  theme_minimal() +
+  scale_color_viridis_d()
 ```
+We decide not to start on items 1 and 2, because it requires special knowledge of additional packages not covered in class. However, we are currently studying how to do them. 
+
+
