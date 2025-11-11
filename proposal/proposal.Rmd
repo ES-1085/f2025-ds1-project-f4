@@ -150,3 +150,6 @@ ggplot(df_percentiles, aes(x = gdp_percentile, y = polyarchy_percentile, color =
 We decide not to start on items 1 and 2, because it requires special knowledge of additional packages not covered in class. However, we are currently studying how to do them. 
 
 
+
+
+
