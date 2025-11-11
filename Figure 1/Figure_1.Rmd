@@ -1,5 +1,35 @@
 ---
 title: "Figure_1"
-output: html_document
+output: github_document
 ---
+
+```{r}
+library(tidyverse)
+library(broom)
+# install.packages("skimr")
+library(skimr)
+library(stringr)
+library(sf)
+library(RColorBrewer)
+library(htmltools)
+library(leafsync)
+library(leaflet)
+library(kableExtra)
+df <- read_csv("../data/vdem3.csv")
+```
+
+```{r renaming-variables}
+df <- df %>% 
+  rename(polyarchy = v2x_polyarchy, 
+         libdem = v2x_libdem, 
+         delibdem = v2x_delibdem,
+         partidem = v2x_partipdem,
+         egaldem = v2x_egaldem, 
+         countryid = country_text_id,
+         gdppc = gdp_per_capita
+         )
+```
+
+
+
 
