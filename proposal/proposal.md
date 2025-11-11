@@ -1,6 +1,6 @@
 Project proposal
 ================
-Fantastic 4 - RB, Keagan, Ryan, Bravo
+Fantastic 4 - RB, Keagan, Ian, Bravo
 
 ``` r
 library(tidyverse)
@@ -147,8 +147,7 @@ following variables: `country`, `year`, `countryid`, `polyarchy`,
 
 Most of our analyses will include three main variables: `year`, the
 measures of democracy (`polyarchy`, `libdem`, `partipdem`, `delibdem`,
-`egaldem`), and measures of economic development (`gdppc` and
-\`gini\`\`).
+`egaldem`), and measures of economic development (`gdppc` and `gini`).
 
 To further illustrate this, we plan to use the following visualizations:
 

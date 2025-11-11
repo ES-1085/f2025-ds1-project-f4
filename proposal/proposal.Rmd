@@ -1,6 +1,6 @@
 ---
 title: "Project proposal"
-author: "Fantastic 4 - RB, Keagan, Ryan, Bravo"
+author: "Fantastic 4 - RB, Keagan, Ian, Bravo"
 output: github_document
 ---
 
@@ -103,7 +103,7 @@ df %>%
 
 We plan to answer the research question using basic visualizations of correlations without considering covariates. To do this we use the following variables: `country`, `year`, `countryid`, `polyarchy`, `libdem`, `partipdem`, `delibdem`, `egaldem`, `gdp`, `gdppc`, `population`, `region`, `continent`, and `gini`.
 
-Most of our analyses will include three main variables: `year`, the measures of democracy (`polyarchy`, `libdem`, `partipdem`, `delibdem`, `egaldem`), and measures of economic development (`gdppc` and `gini``). 
+Most of our analyses will include three main variables: `year`, the measures of democracy (`polyarchy`, `libdem`, `partipdem`, `delibdem`, `egaldem`), and measures of economic development (`gdppc` and `gini`). 
 
 To further illustrate this, we plan to use the following visualizations:
 
