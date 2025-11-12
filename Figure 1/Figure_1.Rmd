@@ -30,6 +30,79 @@ df <- df %>%
          )
 ```
 
+```{r}
+df_year <- df %>%
+  group_by(year) %>%
+  summarise(
+    Polyarchy = median(polyarchy, na.rm = TRUE),
+    `Liberal Democracy` = median(libdem, na.rm = TRUE),
+    `Deliberative Democracy` = median(delibdem, na.rm = TRUE),
+    `Participatory Democracy` = median(partidem, na.rm = TRUE),
+    `Egalitarian Democracy` = median(egaldem, na.rm = TRUE),
+    `GDP Per Capita` = median(gdppc, na.rm = TRUE)
+  )
+
+df_long <- df_year %>%
+  pivot_longer(
+    cols = c(Polyarchy, `Liberal Democracy`, `Deliberative Democracy`, `Participatory Democracy`,  `Egalitarian Democracy`),
+    names_to = "index",
+    values_to = "value"
+  )
+
+df_long <- df_long %>%
+  mutate(
+    index = factor(
+      index,
+      levels = c(
+        "Polyarchy",
+        "Liberal Democracy",
+        "Deliberative Democracy",
+        "Participatory Democracy",
+        "Egalitarian Democracy"
+      )))
+
+
+scale_factor <- max(df_year$`GDP Per Capita`, na.rm = TRUE) /
+                max(df_long$value, na.rm = TRUE)
+
+ggplot(df_year, aes(x = year)) +
+  geom_line(aes(y = `GDP Per Capita`, color = "GDP per capita"), size = 1.2) +
+  geom_line(
+    data = df_long,
+    aes(y = value * scale_factor, color = index),
+    size = 1.2
+  ) +
+  scale_y_continuous(
+    name = "GDP per capita",
+    sec.axis = sec_axis(~ . / scale_factor, name = "Democracy Indices")
+  ) +
+  labs(
+    title = "Democracy and Economy (1960–2024)",
+    x = "Year",
+    color = "Variables",
+    caption = "Source: V-Dem Dataset v13; World Bank World Development Indicators (GDP per capita) "
+  ) +
+  theme_minimal() +
+  scale_color_viridis_d() +
+  annotate("rect", 
+  xmin = 1975, 
+  xmax = 1990, 
+  ymin = 0, 
+  ymax = 8000, 
+  alpha = 0.05, 
+  fill = "#440154FF") +
+   # geom_vline(xintercept = 1975, linetype = "dotted", color = "#440154FF") +
+   # geom_vline(xintercept = 1990, linetype = "dotted", color = "#440154FF") +
+   # geom_text(aes(x = 1966, y = 7000), 
+   # label = "Third Wave \n Democratization", size = 3.5)
+    geom_vline(xintercept = 1975, linetype = "dotted", color = "#440154FF") +
+   geom_vline(xintercept = 1990, linetype = "dotted", color = "#440154FF") +
+   geom_text(aes(x = 1982, y = 7000),
+   label = "Third Wave \n Democratization", size = 3.2)
+
+```
+
+
 
 
 
