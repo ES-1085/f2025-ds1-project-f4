@@ -24,7 +24,7 @@ output: html_document
   #setView(lng = 0, lat = 20, zoom = 2)
 ```
 ```{r loading_libraries}
-# Install packages if needed
+# Install packages
 #install.packages(c("ggplot2", "dplyr", "rnaturalearth", "rnaturalearthdata"))
 
 # Load libraries
