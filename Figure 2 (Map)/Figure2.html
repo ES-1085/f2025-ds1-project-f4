@@ -353,16 +353,7 @@ display: none;
 </div>
 
 
-<pre class="r"><code># Install packages if needed
-#install.packages(c(&quot;ggplot2&quot;, &quot;dplyr&quot;, &quot;rnaturalearth&quot;, &quot;rnaturalearthdata&quot;))
-
-# Load libraries
-#library(ggplot2)
-#library(dplyr)
-#library(rnaturalearth)
-#library(rnaturalearthdata)
-
-#world &lt;- ne_countries(scale = &quot;medium&quot;, returnclass = &quot;sf&quot;)
+<pre class="r"><code>#world &lt;- ne_countries(scale = &quot;medium&quot;, returnclass = &quot;sf&quot;)
 #world_data &lt;- world %&gt;%
   #left_join(df, by = c(&quot;iso_a3&quot; = &quot;iso3c&quot;))</code></pre>
 <pre class="r"><code>#pal &lt;- colorNumeric(&quot;YlGnBu&quot;, domain = df$value, na.color = &quot;lightgrey&quot;)
@@ -376,6 +367,14 @@ display: none;
     #popup = ~paste(name, &quot;&lt;br&gt;gdp:&quot;, gdp)
   #) |&gt;
   #setView(lng = 0, lat = 20, zoom = 2)</code></pre>
+<pre class="r"><code># Install packages if needed
+#install.packages(c(&quot;ggplot2&quot;, &quot;dplyr&quot;, &quot;rnaturalearth&quot;, &quot;rnaturalearthdata&quot;))
+
+# Load libraries
+#library(ggplot2)
+#library(dplyr)
+#library(rnaturalearth)
+#library(rnaturalearthdata)</code></pre>
 
 
 
