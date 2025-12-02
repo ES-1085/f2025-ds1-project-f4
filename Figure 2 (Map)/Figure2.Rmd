@@ -4,12 +4,9 @@ output: html_document
 ---
 
 ```{r loading_libraries}
-# Install packages
-install.packages(c("ggplot2", "dplyr", "rnaturalearth", "rnaturalearthdata"))
-install.packages("gganimate") 
+#install.packages(c("ggplot2", "dplyr", "rnaturalearth", "rnaturalearthdata"))
+#install.packages("gganimate") 
 
-
-#Load libraries
 library(gganimate)
 library(ggplot2)
 library(dplyr)
@@ -28,10 +25,8 @@ world <- ne_countries(scale = "medium", returnclass = "sf")
 world_data <- world %>%
   left_join(df, by = c("iso_a3" = "iso3c"))
 
-# --- Filter data for range 1960–2024 ---
 df <- df %>% filter(year >= 1960 & year <= 2024)
 
-# --- Build animated ggplot ---
 p <- ggplot(world_data) +
   geom_sf(aes(fill = gdppc), color = "gray30", size = 0.2) +
   scale_fill_viridis_c(option = "plasma", na.value = "lightgray",
@@ -52,12 +47,9 @@ p <- ggplot(world_data) +
   ) +
   ease_aes("linear")
 
-
-# --- Render and save as GIF ---
-animate(
-  p,
-  nframes = 200,          # Total number of frames
-  fps = 10,               # Frames per second
+animate(p,
+  nframes = 200,
+  fps = 10,
   width = 900, height = 600,
   renderer = gifski_renderer("world_gdppc_1960_2024.gif")
 )
@@ -76,6 +68,30 @@ leaflet(world_data) |>
     popup = ~paste(name, "<br>gdp:", gdp)
 ) |>
   setView(lng = 0, lat = 20, zoom = 2)
+```
+
+```{r gdp-2024-map}
+year_to_plot <- 2024
+map_data_year <- df |> 
+  filter(year == year_to_plot)
+
+world <- ne_countries(scale = "medium", returnclass = "sf")
+
+world_data <- world %>%
+  left_join(map_data_year, by = c("iso_a3" = "countryid"))
+
+ggplot(data = world_data) +
+  geom_sf(aes(fill = gdppc), color = "gray30", size = 0.2) +
+  scale_fill_viridis_c(na.value = "lightgray",
+                       name = "GDP per Capita") +
+  labs(
+    title = paste("World GDP per Capita in", year_to_plot)
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "left",
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+  )
 ```
 
 
