@@ -89,10 +89,36 @@ ggplot(data = world_data) +
   ) +
   theme_minimal() +
   theme(
-    legend.position = "left",
-    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
-  )
+  axis.text = element_blank(),
+  axis.ticks = element_blank(),
+  legend.position = "left",
+  plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+)
 ```
+```{r Democracy-2024-map}
+year_to_plot <- 2024
+map_data_year <- df |> 
+  filter(year == year_to_plot)
 
+world <- ne_countries(scale = "medium", returnclass = "sf")
+
+world_data <- world %>%
+  left_join(map_data_year, by = c("iso_a3" = "countryid"))
+
+ggplot(data = world_data) +
+  geom_sf(aes(fill = libdem), color = "gray30", size = 0.2) +
+  scale_fill_viridis_c(na.value = "lightgray",
+                       name = "Liberal Dem. Index") +
+  labs(
+    title = paste("World Liberal Democracy in", year_to_plot)
+  ) +
+  theme_minimal() +
+  theme(
+  axis.text = element_blank(),
+  axis.ticks = element_blank(),
+  legend.position = "left",
+  plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+)
+```
 
 
