@@ -16,11 +16,6 @@ library(leafsync)
 library(leaflet)
 library(kableExtra)
 df <- read_csv("../data/vdem3.csv")
-#install.packages(c("ggplot2", "dplyr", "rnaturalearth", "rnaturalearthdata"))
-library(ggplot2)
-library(dplyr)
-library(rnaturalearth)
-library(rnaturalearthdata)
 ```
 
 ```{r renaming-variables}
