@@ -28,7 +28,7 @@ world_data <- world %>%
 df <- df %>% filter(year >= 1960 & year <= 2024)
 
 p <- ggplot(world_data) +
-  geom_sf(aes(fill = gdppc), color = "gray30", size = 0.2) +
+  geom_sf(aes(fill = gdp_per_capita), color = "gray30", size = 0.2) +
   scale_fill_viridis_c(option = "plasma", na.value = "lightgray",
                        name = "GDP per Capita") +
   labs(
@@ -78,10 +78,10 @@ map_data_year <- df |>
 world <- ne_countries(scale = "medium", returnclass = "sf")
 
 world_data <- world %>%
-  left_join(map_data_year, by = c("iso_a3" = "countryid"))
+  left_join(map_data_year, by = c("iso_a3" = "country_text_id"))
 
 ggplot(data = world_data) +
-  geom_sf(aes(fill = gdppc), color = "gray30", size = 0.2) +
+  geom_sf(aes(fill = gdp_per_capita), color = "gray30", size = 0.2) +
   scale_fill_viridis_c(na.value = "lightgray",
                        name = "GDP per Capita") +
   labs(
@@ -95,6 +95,7 @@ ggplot(data = world_data) +
   plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
 )
 ```
+
 ```{r Democracy-2024-map}
 year_to_plot <- 2024
 map_data_year <- df |> 
@@ -103,10 +104,10 @@ map_data_year <- df |>
 world <- ne_countries(scale = "medium", returnclass = "sf")
 
 world_data <- world %>%
-  left_join(map_data_year, by = c("iso_a3" = "countryid"))
+  left_join(map_data_year, by = c("iso_a3" = "country_text_id"))
 
 ggplot(data = world_data) +
-  geom_sf(aes(fill = libdem), color = "gray30", size = 0.2) +
+  geom_sf(aes(fill = v2x_libdem), color = "gray30", size = 0.2) +
   scale_fill_viridis_c(na.value = "lightgray",
                        name = "Liberal Dem. Index") +
   labs(
@@ -119,6 +120,41 @@ ggplot(data = world_data) +
   legend.position = "left",
   plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
 )
+```
+``` {r Liberal_democracy_across_time}
+world <- ne_countries(scale = "medium", returnclass = "sf")
+world_data <- world %>%
+  left_join(df, by = c("iso_a3" = "iso3c"))
+
+df <- df %>% filter(year >= 2020 & year <= 2024)
+
+p <- ggplot(world_data) +
+  geom_sf(aes(fill = v2x_libdem), color = "gray30", size = 0.2) +
+  scale_fill_viridis_c(option = "plasma", na.value = "lightgray",
+                       name = "Liberal Democracy Rating") +
+  labs(
+    title = "World Liberal Democracy Rating: {closest_state}",
+    caption = "Source: V-Dem Dataset v13"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "left",
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+  ) +
+  transition_states(
+    year,
+    transition_length = 1,
+    state_length = 1
+  ) +
+  ease_aes("linear")
+
+animate(p,
+  nframes = 200,
+  fps = 10,
+  width = 900, height = 600,
+  renderer = gifski_renderer("world_libdem_rating_2020_2024.gif")
+)
+
 ```
 
 
