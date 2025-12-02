@@ -20,23 +20,44 @@ world <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")
 
 ```
 
-``` {r}
+``` {r gdppc-across-time}
+library(ggplot2)
+library(gganimate)
+library(sf)
+library(dplyr)
+library(viridis)
+library(av)
+library(rnaturalearth)
+
+# 1. Load world polygons
 world <- ne_countries(scale = "medium", returnclass = "sf")
+
+# 2. Filter GDP data FIRST & rename GDP column
+df_clean <- df %>%
+  filter(year >= 1960, year <= 2024)
+
+# 3. Join world + GDP
 world_data <- world %>%
-  left_join(df, by = c("iso_a3" = "iso3c"))
+  left_join(df_clean, by = c("iso_a3" = "iso3c"))
 
-df <- df %>% filter(year >= 1960 & year <= 2024)
 
+# 4. Build animation
 p <- ggplot(world_data) +
-  geom_sf(aes(fill = gdp_per_capita), color = "gray30", size = 0.2) +
-  scale_fill_viridis_c(option = "plasma", na.value = "lightgray",
-                       name = "GDP per Capita") +
+  geom_sf(aes(fill = gdppc), color = "gray30", size = 0.2) +
+  scale_fill_viridis_c(
+    option = "plasma",
+    na.value = "lightgray",
+    name = "GDP per Capita",
+    limits = c(0, 100000),   
+  ) +
   labs(
     title = "World GDP per Capita: {closest_state}",
-    caption = "Source: V-Dem Dataset v13; World Bank World Development Indicators (GDP per capita)"
+    caption = "Source: V-Dem Dataset v13; World Bank WDI"
   ) +
   theme_minimal() +
   theme(
+    axis.text = element_blank(),
+  axis.ticks = element_blank(),
     legend.position = "left",
     plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
   ) +
@@ -47,13 +68,15 @@ p <- ggplot(world_data) +
   ) +
   ease_aes("linear")
 
-animate(p,
+# 5. Render to MP4 (recommended)
+animate(
+  p,
   nframes = 200,
   fps = 10,
-  width = 900, height = 600,
-  renderer = gifski_renderer("world_gdppc_1960_2024.gif")
+  width = 900,
+  height = 600,
+  renderer = av_renderer("world_gdppc_1960_2024.mp4")
 )
-
 ```
 
 ``` {r map-of-polyarchies}
@@ -81,7 +104,7 @@ world_data <- world %>%
   left_join(map_data_year, by = c("iso_a3" = "country_text_id"))
 
 ggplot(data = world_data) +
-  geom_sf(aes(fill = gdp_per_capita), color = "gray30", size = 0.2) +
+  geom_sf(aes(fill = gdppc), color = "gray30", size = 0.2) +
   scale_fill_viridis_c(na.value = "lightgray",
                        name = "GDP per Capita") +
   labs(
@@ -107,7 +130,7 @@ world_data <- world %>%
   left_join(map_data_year, by = c("iso_a3" = "country_text_id"))
 
 ggplot(data = world_data) +
-  geom_sf(aes(fill = v2x_libdem), color = "gray30", size = 0.2) +
+  geom_sf(aes(fill = libdem), color = "gray30", size = 0.2) +
   scale_fill_viridis_c(na.value = "lightgray",
                        name = "Liberal Dem. Index") +
   labs(
@@ -121,23 +144,46 @@ ggplot(data = world_data) +
   plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
 )
 ```
-``` {r Liberal_democracy_across_time}
+
+``` {r Liberal-democracy-across-time}
+# Install once if you haven't already:
+# install.packages(c("ggplot2", "gganimate", "sf", "dplyr", "viridis", "av"))
+
+library(ggplot2)
+library(gganimate)
+library(sf)
+library(dplyr)
+library(viridis)
+library(av)
+library(rnaturalearth)   # for ne_countries
+
+# Get world polygons
 world <- ne_countries(scale = "medium", returnclass = "sf")
+
+# Filter your V-Dem data to the desired years
+df <- df %>%
+  filter(year >= 1960 & year <= 2024)
+
+# Join V-Dem data to world polygons
 world_data <- world %>%
   left_join(df, by = c("iso_a3" = "iso3c"))
 
-df <- df %>% filter(year >= 2020 & year <= 2024)
-
+# Build the animation plot
 p <- ggplot(world_data) +
-  geom_sf(aes(fill = v2x_libdem), color = "gray30", size = 0.2) +
-  scale_fill_viridis_c(option = "plasma", na.value = "lightgray",
-                       name = "Liberal Democracy Rating") +
+  geom_sf(aes(fill = libdem), color = "gray30", size = 0.2) +
+  scale_fill_viridis_c(
+    option = "plasma",
+    na.value = "lightgray",
+    name = "Liberal Democracy Rating"
+  ) +
   labs(
     title = "World Liberal Democracy Rating: {closest_state}",
     caption = "Source: V-Dem Dataset v13"
   ) +
   theme_minimal() +
   theme(
+    axis.text = element_blank(),
+  axis.ticks = element_blank(),
     legend.position = "left",
     plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
   ) +
@@ -148,11 +194,14 @@ p <- ggplot(world_data) +
   ) +
   ease_aes("linear")
 
-animate(p,
+# Render to MP4 instead of GIF
+animate(
+  p,
   nframes = 200,
   fps = 10,
-  width = 900, height = 600,
-  renderer = gifski_renderer("world_libdem_rating_2020_2024.gif")
+  width = 900,
+  height = 600,
+  renderer = av_renderer("world_libdem_rating_1960_2024.mp4")
 )
 
 ```
