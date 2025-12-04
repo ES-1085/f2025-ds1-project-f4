@@ -35,7 +35,7 @@ library(av)
 ### Step 1: 
 In this project, we use Varieties of Democracy (V-Dem) dataset and World Development Indicators (WDI) dataset of the World Bank. Because of the size of V-Dem dataset, we had to merge both the dataset outside Posit. The following shows how we do this. We then rename variables in our main dataset df. Here, we observe `r ncol(df)` variables and `r nrow(df)` observations.
 
-```{r}
+```{r data-clean}
 df <- read_csv("../data/vdem3.csv")
 vdem2 <- df %>% 
    select(country_name,
@@ -108,9 +108,7 @@ To further illustrate this, we plan to use the following visualizations:
 3. Scatter Plot and Heatmaps- This plot is the most important of all. This finally shows the bivariate relationship between economic development and democracy. One way to show this is by transforming the x-axis to the percentile of countries' economic development and y-axis to the percentile of countries in terms of a measure of democracy. We will then facet them in terms of the measures of democracy (`polyarchy`, `libdem`, `partipdem`, `delibdem`, `egaldem`). This transformation is necessary, because as you will see below, the distribution of the economic indicator is highly skewed (although we may also use the log function).
 
 
-## Plots
-
-### Plot 1: _________
+## Plots:
 
 #### Data cleanup steps specific to plot 1
 
@@ -130,6 +128,7 @@ These data cleaning sections are optional and depend on if you have some data cl
 
 
 #### Final Plot 1
+This 
 
 ```{r curve_plot}
 df_year <- df %>%
@@ -210,102 +209,12 @@ ggsave(filename = "plot_output/Democracy_vs_Economy.png", plot = p1, width = 6, 
 
 
 ### Plot 2: gdppc-across-time map and Liberal-democracy-across-time map
+Since it take so much time to knit when generating mp4 files. We put the output link overhere. See over here: <https://drive.google.com/file/u/0/d/1QzBOESqxSqmxjJ7EiKZybSGOcYg-OGwN/view?usp=sharing&pli=1>
 
-``` {r gdppc-across-time}
 
 
-world <- ne_countries(scale = "medium", returnclass = "sf")
 
-df_clean <- df %>%
-  filter(year >= 1960, year <= 2024)
-
-world_data <- world %>%
-  left_join(df_clean, by = c("iso_a3" = "iso3c"))
-
-p <- ggplot(world_data) +
-  geom_sf(aes(fill = gdppc), color = "gray30", size = 0.2) +
-  scale_fill_viridis_c(
-    option = "plasma",
-    na.value = "lightgray",
-    name = "GDP per Capita",
-    limits = c(0, 100000),   
-  ) +
-  labs(
-    title = "World GDP per Capita: {closest_state}",
-    caption = "Source: V-Dem Dataset v13; World Bank WDI"
-  ) +
-  theme_minimal() +
-  theme(
-    axis.text = element_blank(),
-    axis.ticks = element_blank(),
-    legend.position = "left",
-    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
-  ) +
-  transition_states(
-    year,
-    transition_length = 1,
-    state_length = 1
-  ) +
-  ease_aes("linear")
-
-animate(
-  p,
-  nframes = 200,
-  fps = 10,
-  width = 900,
-  height = 600,
-  renderer = av_renderer("output/plot_world_gdppc_1960_2024.mp4") 
-)
-```
-
-``` {r Liberal-democracy-across-time}
-
-# Get world polygons
-world <- ne_countries(scale = "medium", returnclass = "sf")
-
-df_filtered <- df %>%
-  filter(year >= 1960 & year <= 2024)
-
-world_data <- world %>%
-  left_join(df_filtered, by = c("iso_a3" = "iso3c"))
-
-p <- ggplot(world_data) +
-  geom_sf(aes(fill = libdem), color = "gray30", size = 0.2) +
-  scale_fill_viridis_c(
-    option = "plasma",
-    na.value = "lightgray",
-    name = "Liberal Democracy Rating"
-  ) +
-  labs(
-    title = "World Liberal Democracy Rating: {closest_state}",
-    caption = "Source: V-Dem Dataset v13"
-  ) +
-  theme_minimal() +
-  theme(
-    axis.text = element_blank(),
-    axis.ticks = element_blank(),
-    legend.position = "left",
-    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
-  ) +
-  transition_states(
-    year,
-    transition_length = 1,
-    state_length = 1
-  ) +
-  ease_aes("linear")
-
-# Render to MP4 inside the output folder
-animate(
-  p,
-  nframes = 200,
-  fps = 10,
-  width = 900,
-  height = 600,
-  renderer = av_renderer("plot_output/world_libdem_rating_1960_2024.mp4") 
-)
-
-```
-### Plot 3: ___________
+### Plot 3: Positive Relationship between Democracy and Economy (1960–2024)
 
 ``` {r Relation_plot}
 
@@ -348,5 +257,5 @@ ggsave(filename = "output/Democracy_vs_Economy_Bin2d.png",
        height = 6)
 ```
 
-### Plot 4: ___________ 
+
 
