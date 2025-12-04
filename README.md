@@ -6,6 +6,9 @@ by Fantastic Four (F4)
 
 This project deals with economy and regime. Specifically, we inquire on the relationship between countries’ economy and their regime. We ask how a country’s economy determines its regime measured in democracy and dictatorship continuum. We use regime and economic indicators collected from the Varieties of Democracy (V-Dem) dataset and World Development Indicators (WDI) dataset of the World Bank, respectively. V-Dem provides the five indices of democracies, while WDI provides economic indicator measured in GDP per capita.
 
+(1) How does the region mediate the relationship? 
+(2) What historically relevant events one notices that affect both the economy and regime?
+(3) Can it be that the regime determines the economy?
 
 ## Handout
 
