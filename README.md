@@ -4,14 +4,8 @@ by Fantastic Four (F4)
 
 ## Summary
 
-Write-up of your project and findings go here. Think of this as the text
-of your handout. The length should be roughly 5 minutes when read
-out loud. Although pacing varies, a 5-minute speech is roughly 750
-words. 
+This project deals with economy and regime. Specifically, we inquire on the relationship between countries’ economy and their regime. We ask how a country’s economy determines its regime measured in democracy and dictatorship continuum. We use regime and economic indicators collected from the Varieties of Democracy (V-Dem) dataset and World Development Indicators (WDI) dataset of the World Bank, respectively. V-Dem provides the five indices of democracies, while WDI provides economic indicator measured in GDP per capita.
 
-Your results with proper output and
-graphics go in your handout, this space is for a brief summary of
-your project.
 
 ## Handout
 

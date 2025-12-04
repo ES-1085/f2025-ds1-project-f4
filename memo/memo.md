@@ -211,7 +211,12 @@ data cleaning steps specific to a particular plot
 
 #### Final Plot 1
 
-This
+This graph shows the change in Democracy and GDP per capita over time.
+We can see that after the Third Wave of Democratization, which shifted
+from authoritarian regimes to democratic governments, there is an almost
+instant increase in democratization, shortly followed by a rise in GDP
+per capita. This data shows that once a country has become more
+democratic, its economy begins to increase shortly after.
 
 ``` r
 df_year <- df %>%
@@ -302,8 +307,21 @@ ggsave(filename = "plot_output/Democracy_vs_Economy.png", plot = p1, width = 6, 
 Since it take so much time to knit when generating mp4 files. We put the
 output link overhere. See over here:
 <https://drive.google.com/file/u/0/d/1QzBOESqxSqmxjJ7EiKZybSGOcYg-OGwN/view?usp=sharing&pli=1>
+These maps show the GDP per capita and the World Liberal Democracy of
+the entire world in 2024. When comparing these maps side by side, we can
+see that in countries that are more democratic, we also see a better GDP
+per capita. When you scan the QR codes, you can also see the change in
+GDP per Capita and World Liberal Democracy over time (1960 - 2024). In
+these changing maps, we can also see the same pattern as in 2024.
 
 ### Plot 3: Positive Relationship between Democracy and Economy (1960–2024)
+
+These plots show the bivariate relationship between the percentile of
+indices of democracy and GDP per capita. We can observe here a strong
+positive relationship between economy and democracy. Moreover, the
+concentration in the lower right of each plot shows what scholars call
+resource course, where because states have high amount of resources,
+they become less dependent on the people.
 
 ``` r
 df_percentiles <- df %>%
