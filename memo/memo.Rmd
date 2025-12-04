@@ -7,45 +7,108 @@ output: github_document
 This document should contain a detailed account of the data clean up for your data and the design choices you are making for your plots. For instance you will want to document choices you've made that were intentional for your graphic, e.g. color you've chosen for the plot. Think of this document as a code script someone can follow to reproduce the data cleaning steps and graphics in your handout.
 
 ```{r load-packages, message = FALSE}
+# install.packages(c("ggplot2", "gganimate", "sf", "dplyr", "viridis", "av"))
+ #install.packages("WDI")
+ #install.packages("countrycode")  
+ library(WDI)
+ library(countrycode)
 library(tidyverse)
 library(broom)
+library(gganimate)
+library(ggplot2)
+library(dplyr)
+library(rnaturalearth)
+library(rnaturalearthdata)
+library(sf)  
+library(skimr)
+library(stringr)
+library(RColorBrewer)
+library(htmltools)
+library(leafsync)
+library(leaflet)
+library(kableExtra)
+library(av)
 ```
 
 ## Data Clean Up Steps for Overall Data
 
-### Step 1: _________
+### Step 1: 
+In this project, we use Varieties of Democracy (V-Dem) dataset and World Development Indicators (WDI) dataset of the World Bank. Because of the size of V-Dem dataset, we had to merge both the dataset outside Posit. The following shows how we do this. We then rename variables in our main dataset df. Here, we observe `r ncol(df)` variables and `r nrow(df)` observations.
 
 ```{r}
+df <- read_csv("../data/vdem3.csv")
+vdem2 <- df %>% 
+   select(country_name,
+          histname,
+          historical_date,
+          year,
+          country_text_id,
+          country_id,
+          v2x_polyarchy,
+          v2x_libdem,
+          v2x_partipdem,
+          v2x_delibdem,
+          v2x_egaldem) 
+ 
+ data <- WDI(
+   country = "all",
+   indicator = c(
+     "NY.GDP.PCAP.CD",  
+     "NY.GDP.MKTP.CD",  
+     "SP.POP.TOTL",     
+     "SI.POV.GINI"     
+   ),
+  start = 1960,
+   end = 2024,
+   extra = TRUE   )
+ 
+ WDI_data <- data %>%
+   rename(
+     gdp_per_capita = NY.GDP.PCAP.CD,
+     gdp = NY.GDP.MKTP.CD,
+     population = SP.POP.TOTL,
+     gini = SI.POV.GINI,
+     iso3c = iso3c,
+     region = region,
+     country_name = country
+   ) %>%
+   mutate(
+     continent = countrycode(iso3c, origin = "iso3c", destination = "continent")
+   ) %>%
+
+   select(year, country_name, iso3c, gdp_per_capita, gdp, population, gini, region, continent)
+
+ df <- right_join(vdem2, WDI_data, by = c("country_name", "year"))
+ 
+ df <- df %>% 
+  rename(polyarchy = v2x_polyarchy, 
+         libdem = v2x_libdem, 
+         delibdem = v2x_delibdem,
+         partidem = v2x_partipdem,
+         egaldem = v2x_egaldem, 
+         countryid = country_text_id,
+         gdppc = gdp_per_capita
+         )
+ df %>% 
+  glimpse()
 
 ```
 
-### Step 2: ________
+### Step 2: 
+We plan to answer the research question using basic visualizations of correlations without considering covariates. To do this we use the following variables: `country`, `year`, `countryid`, `polyarchy`, `libdem`, `partipdem`, `delibdem`, `egaldem`, `gdp`, `gdppc`, `population`, `region`, `continent`, and `gini`.
+
+Most of our analyses will include three main variables: `year`, the measures of democracy (`polyarchy`, `libdem`, `partipdem`, `delibdem`, `egaldem`), and measures of economic development (`gdppc` and `gini`). 
+
+To further illustrate this, we plan to use the following visualizations:
+
+1. Time-series Plot - This will shows how the measures of democracy (`polyarchy`, `libdem`, `partipdem`, `delibdem`, `egaldem`) and measures of economic development (`gdppc` and `gini`) evolved through time. In the same visualization, we will also include lines that describe any particular events that explains the increase or drop of both measures. We can also facet this to show how the relationship differs (if at all) with respect to `region`.
+
+2. Animated Maps - This is another way to show how the measures of democracy (`polyarchy`, `libdem`, `partipdem`, `delibdem`, `egaldem`) and measures of economic development (`gdppc` and `gini`) evolved through time while also considering the `country` in a map. 
+
+3. Scatter Plot and Heatmaps- This plot is the most important of all. This finally shows the bivariate relationship between economic development and democracy. One way to show this is by transforming the x-axis to the percentile of countries' economic development and y-axis to the percentile of countries in terms of a measure of democracy. We will then facet them in terms of the measures of democracy (`polyarchy`, `libdem`, `partipdem`, `delibdem`, `egaldem`). This transformation is necessary, because as you will see below, the distribution of the economic indicator is highly skewed (although we may also use the log function).
+
 
 ## Plots
-
-### ggsave example for saving plots
-
-```{r starwars ggsave example}
-p1 <- starwars |>
-  filter(mass < 1000, 
-         species %in% c("Human", "Cerean", "Pau'an", "Droid", "Gungan")) |>
-  ggplot() +
-  geom_point(aes(x = mass, 
-                 y = height, 
-                 color = species)) +
-  labs(x = "Weight (kg)", 
-       y = "Height (m)",
-       color = "Species",
-       title = "Weight and Height of Select Starwars Species",
-       caption = paste("This data comes from the starwars api: https://swapi.py43.com"))
-
-
-ggsave("example-starwars.png", width = 4, height = 4)
-
-ggsave("example-starwars-wide.png", width = 6, height = 4)
-```
-
-
 
 ### Plot 1: _________
 
@@ -53,23 +116,237 @@ ggsave("example-starwars-wide.png", width = 6, height = 4)
 
 These data cleaning sections are optional and depend on if you have some data cleaning steps specific to a particular plot
 
-```{r}
+```{r data_clean_opt}
+#df <- df %>% 
+ # rename(polyarchy = v2x_polyarchy, 
+  #       libdem = v2x_libdem, 
+   #      delibdem = v2x_delibdem,
+    #     partidem = v2x_partipdem,
+     #    egaldem = v2x_egaldem, 
+      #   countryid = country_text_id,
+       #1  gdppc = gdp_per_capita)
 
 ```
 
 
 #### Final Plot 1
 
-```{r}
+```{r curve_plot}
+df_year <- df %>%
+  group_by(year) %>%
+  summarise(
+    Polyarchy = median(polyarchy, na.rm = TRUE),
+    `Liberal Democracy` = median(libdem, na.rm = TRUE),
+    `Deliberative Democracy` = median(delibdem, na.rm = TRUE),
+    `Participatory Democracy` = median(partidem, na.rm = TRUE),
+    `Egalitarian Democracy` = median(egaldem, na.rm = TRUE),
+    `GDP Per Capita` = median(gdppc, na.rm = TRUE)
+  )
 
+df_long <- df_year %>%
+  pivot_longer(
+    cols = c(Polyarchy, `Liberal Democracy`, `Deliberative Democracy`, `Participatory Democracy`,  `Egalitarian Democracy`),
+    names_to = "index",
+    values_to = "value"
+  )
+
+df_long <- df_long %>%
+  mutate(
+    index = factor(
+      index,
+      levels = c(
+        "Polyarchy",
+        "Liberal Democracy",
+        "Deliberative Democracy",
+        "Participatory Democracy",
+        "Egalitarian Democracy"
+      )))
+
+
+scale_factor <- max(df_year$`GDP Per Capita`, na.rm = TRUE) /
+                max(df_long$value, na.rm = TRUE)
+
+p1 <- ggplot(df_year, aes(x = year)) +
+  geom_line(aes(y = `GDP Per Capita`, color = "GDP per capita"), size = 1.2) +
+  geom_line(
+    data = df_long,
+    aes(y = value * scale_factor, color = index),
+    size = 1.2
+  ) +
+  scale_y_continuous(
+    name = "GDP per capita",
+    sec.axis = sec_axis(~ . / scale_factor, name = "Democracy Indices")
+  ) +
+  labs(
+    title = "Democracy and Economy (1960–2024)",
+    x = "Year",
+    color = "Variables",
+    caption = "Source: V-Dem Dataset v13; World Bank World Development Indicators (GDP per capita) "
+  ) +
+  theme_minimal() +
+  scale_color_viridis_d() +
+  annotate("rect", 
+  xmin = 1975, 
+  xmax = 1990, 
+  ymin = 0, 
+  ymax = 8000, 
+  alpha = 0.05, 
+  fill = "#440154FF") +
+   # geom_vline(xintercept = 1975, linetype = "dotted", color = "#440154FF") +
+   # geom_vline(xintercept = 1990, linetype = "dotted", color = "#440154FF") +
+   # geom_text(aes(x = 1966, y = 7000), 
+   # label = "Third Wave \n Democratization", size = 3.5)
+    geom_vline(xintercept = 1975, linetype = "dotted", color = "#440154FF") +
+   geom_vline(xintercept = 1990, linetype = "dotted", color = "#440154FF") +
+   annotate("text", 
+         x = 1982, 
+         y = 7000, 
+         label = "Third Wave \n Democratization", 
+         size = 3.2)
+
+
+ggsave(filename = "plot_output/Democracy_vs_Economy.png", plot = p1, width = 6, height = 4)
 ```
 
 
-### Plot 2: _________
+### Plot 2: gdppc-across-time map and Liberal-democracy-across-time map
 
+``` {r gdppc-across-time}
+
+
+world <- ne_countries(scale = "medium", returnclass = "sf")
+
+df_clean <- df %>%
+  filter(year >= 1960, year <= 2024)
+
+world_data <- world %>%
+  left_join(df_clean, by = c("iso_a3" = "iso3c"))
+
+p <- ggplot(world_data) +
+  geom_sf(aes(fill = gdppc), color = "gray30", size = 0.2) +
+  scale_fill_viridis_c(
+    option = "plasma",
+    na.value = "lightgray",
+    name = "GDP per Capita",
+    limits = c(0, 100000),   
+  ) +
+  labs(
+    title = "World GDP per Capita: {closest_state}",
+    caption = "Source: V-Dem Dataset v13; World Bank WDI"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    legend.position = "left",
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+  ) +
+  transition_states(
+    year,
+    transition_length = 1,
+    state_length = 1
+  ) +
+  ease_aes("linear")
+
+animate(
+  p,
+  nframes = 200,
+  fps = 10,
+  width = 900,
+  height = 600,
+  renderer = av_renderer("output/plot_world_gdppc_1960_2024.mp4") 
+)
+```
+
+``` {r Liberal-democracy-across-time}
+
+# Get world polygons
+world <- ne_countries(scale = "medium", returnclass = "sf")
+
+df_filtered <- df %>%
+  filter(year >= 1960 & year <= 2024)
+
+world_data <- world %>%
+  left_join(df_filtered, by = c("iso_a3" = "iso3c"))
+
+p <- ggplot(world_data) +
+  geom_sf(aes(fill = libdem), color = "gray30", size = 0.2) +
+  scale_fill_viridis_c(
+    option = "plasma",
+    na.value = "lightgray",
+    name = "Liberal Democracy Rating"
+  ) +
+  labs(
+    title = "World Liberal Democracy Rating: {closest_state}",
+    caption = "Source: V-Dem Dataset v13"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    legend.position = "left",
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+  ) +
+  transition_states(
+    year,
+    transition_length = 1,
+    state_length = 1
+  ) +
+  ease_aes("linear")
+
+# Render to MP4 inside the output folder
+animate(
+  p,
+  nframes = 200,
+  fps = 10,
+  width = 900,
+  height = 600,
+  renderer = av_renderer("plot_output/world_libdem_rating_1960_2024.mp4") 
+)
+
+```
 ### Plot 3: ___________
 
-Add more plot sections as needed. Each project should have at least 3 plots, but talk to me if you have fewer than 3.
+``` {r Relation_plot}
+
+df_percentiles <- df %>%
+  mutate(
+    `GDP Per Capita` = percent_rank(gdppc),
+    Polyarchy = percent_rank(polyarchy), 
+    Egalitarian = percent_rank(egaldem),
+    Participatory = percent_rank(partidem),
+    Liberal = percent_rank(libdem),
+    Deliberative = percent_rank(delibdem)
+  )
+
+df_long <- df_percentiles %>%
+  pivot_longer(
+    cols = c(Polyarchy, Egalitarian, Participatory, Liberal, Deliberative),
+    names_to = "metric",
+    values_to = "percentile_value"
+  )
+
+p2 <- ggplot(df_long, aes(x = `GDP Per Capita`, y = percentile_value)) +
+  geom_bin2d(bins = 40) +
+  scale_fill_viridis_c() +
+  facet_wrap(~ metric) +
+  labs(
+    y = "Democracy Index",
+    title = "Positive Relationship between Democracy and Economy (1960–2024)",
+    subtitle = "in Percentile",
+    fill = "Count"
+  ) +
+  theme_minimal()
+
+print(p2)
+
+if(!dir.exists("output")) { dir.create("output") }
+
+ggsave(filename = "output/Democracy_vs_Economy_Bin2d.png", 
+       plot = p2, 
+       width = 8, 
+       height = 6)
+```
 
 ### Plot 4: ___________ 
 
