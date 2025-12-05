@@ -20,7 +20,7 @@ In future research methods, it would be very helpful to develop an analysis for 
 
 ## Handout
 
-Our handout can be found [here](handout/handout.pdf). You can update the filename and extension of your handout, currently it is called handout.pdf
+Our handout can be found [here](handout/handout.pdf).
 
 ## Memo
 
