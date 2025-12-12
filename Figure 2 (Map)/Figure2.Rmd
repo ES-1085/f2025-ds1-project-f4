@@ -4,8 +4,7 @@ output: html_document
 ---
 
 ```{r loading_libraries}
-#install.packages(c("ggplot2", "dplyr", "rnaturalearth", "rnaturalearthdata"))
-#install.packages("gganimate") 
+# install.packages(c("ggplot2", "tidyverse", "gganimate", "rnaturalearth", "rnaturalearthdata"))
 
 library(gganimate)
 library(ggplot2)
@@ -29,19 +28,14 @@ library(viridis)
 library(av)
 library(rnaturalearth)
 
-# 1. Load world polygons
 world <- ne_countries(scale = "medium", returnclass = "sf")
 
-# 2. Filter GDP data FIRST & rename GDP column
 df_clean <- df %>%
   filter(year >= 1960, year <= 2024)
 
-# 3. Join world + GDP
 world_data <- world %>%
   left_join(df_clean, by = c("iso_a3" = "iso3c"))
 
-
-# 4. Build animation
 p <- ggplot(world_data) +
   geom_sf(aes(fill = gdppc), color = "gray30", size = 0.2) +
   scale_fill_viridis_c(
@@ -51,7 +45,7 @@ p <- ggplot(world_data) +
     limits = c(0, 100000),   
   ) +
   labs(
-    title = "World GDP per Capita: {closest_state}",
+    title = "World GDP per Capita",
     caption = "Source: V-Dem Dataset v13; World Bank WDI"
   ) +
   theme_minimal() +
@@ -68,7 +62,6 @@ p <- ggplot(world_data) +
   ) +
   ease_aes("linear")
 
-# 5. Render to MP4 (recommended)
 animate(
   p,
   nframes = 200,
@@ -79,7 +72,7 @@ animate(
 )
 ```
 
-``` {r map-of-polyarchies}
+``` {r map-of-polyarchy}
 pal <- colorNumeric("YlGnBu", domain = df$value, na.color = "lightgrey")
 
 leaflet(world_data) |>

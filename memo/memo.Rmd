@@ -7,11 +7,11 @@ output: github_document
 This document should contain a detailed account of the data clean up for your data and the design choices you are making for your plots. For instance you will want to document choices you've made that were intentional for your graphic, e.g. color you've chosen for the plot. Think of this document as a code script someone can follow to reproduce the data cleaning steps and graphics in your handout.
 
 ```{r load-packages, message = FALSE}
-# install.packages(c("ggplot2", "gganimate", "sf", "dplyr", "viridis", "av"))
- #install.packages("WDI")
- #install.packages("countrycode")  
- library(WDI)
- library(countrycode)
+#install.packages(c("gganimate", "sf","viridis", "av"))
+#install.packages("WDI")
+#install.packages("countrycode")  
+library(WDI)
+library(countrycode)
 library(tidyverse)
 library(broom)
 library(gganimate)
@@ -91,13 +91,26 @@ vdem2 <- df %>%
          )
  df %>% 
   glimpse()
-
 ```
 
 ### Step 2: 
-We plan to answer the research question using basic visualizations of correlations without considering covariates. To do this we use the following variables: `country`, `year`, `countryid`, `polyarchy`, `libdem`, `partipdem`, `delibdem`, `egaldem`, `gdp`, `gdppc`, `population`, `region`, `continent`, and `gini`.
+We answer our research question using basic visualizations of correlations without considering covariates. To do this we use the following variables: `country`, `year`, `countryid`, `polyarchy`, `libdem`, `partipdem`, `delibdem`, `egaldem`, `gdp`, `gdppc`, `population`, `region`, `continent`, and `gini`.
 
 Most of our analyses will include three main variables: `year`, the measures of democracy (`polyarchy`, `libdem`, `partipdem`, `delibdem`, `egaldem`), and measures of economic development (`gdppc` and `gini`). 
+
+Definitions of Democracy Indices
+
+(1) Polyarchy, also known as electoral democracy, is the extent to which elections are free, fair, and inclusive, and whether key democratic institutions allow citizens to choose their leaders meaningfully.
+
+(2) Liberal democracy, on the other hand, is the extent to which individual rights, rule of law, and constraints on executive power protect citizens from government abuse. It is also the most common conception of democracy in the West. 
+
+(3) Deliberative democracy measures whether political decisions are made through reasoned, respectful, and common-good–oriented public deliberation rather than elite coercion or narrow interests.
+
+(4) Participatory Democracy measures how much citizens can directly participate in political processes through civil society, local governance, and non-electoral channels.
+
+(5) Lastly, egalitarian democracy measures the extent to which political power and influence are distributed equally across social groups, ensuring equal access to rights and resources.
+
+These measures are the product of a series of questions answered by experts of about five in each country. These questions are then turned into indices using Bayesian aggregation. These measures are important in representing democracy as they capture the different and often debated definitions of democracy.
 
 To further illustrate this, we plan to use the following visualizations:
 
@@ -128,13 +141,7 @@ These data cleaning sections are optional and depend on if you have some data cl
 
 
 #### Final Plot 1
-This graph shows the change in Democracy and GDP per capita over
-time. We can see that after the Third Wave of Democratization, which
-shifted from authoritarian regimes to democratic governments, there
-is an almost instant increase in democratization, shortly followed by a
-rise in GDP per capita. This data shows that once a country has
-become more democratic, its economy begins to increase shortly
-after.
+This graph shows the change in Democracy and GDP per capita over time. We can see that after the Third Wave of Democratization, which shifted from authoritarian regimes to democratic governments, there is an almost instant increase in democratization, shortly followed by a rise in GDP per capita. This data shows that once a country has become more democratic, its economy begins to increase shortly after.
 
 ```{r curve_plot}
 df_year <- df %>%
@@ -213,33 +220,163 @@ p1 <- ggplot(df_year, aes(x = year)) +
 ggsave(filename = "plot_output/Democracy_vs_Economy.png", plot = p1, width = 6, height = 4)
 ```
 
+In this plot, we use median as the measure of central tendency. This decision is guided by the fact that GDP per capita and measures of democracy are skewed, which makes mean unreliable. Moreover, in political science and economics, when dealing with aggregate data, scholars most often than not use median. 
 
 ### Plot 2: gdppc-across-time map and Liberal-democracy-across-time map
 Since it take so much time to knit when generating mp4 files. We put the output link overhere. See over here: <https://drive.google.com/file/u/0/d/1QzBOESqxSqmxjJ7EiKZybSGOcYg-OGwN/view?usp=sharing&pli=1>
-These maps show the GDP per capita and the World Liberal
-Democracy of the entire world in 2024. When comparing
-these maps side by side, we can see that in countries that
-are more democratic, we also see a better GDP per capita.
-When you scan the QR codes, you can also see the change
-in GDP per Capita and World Liberal Democracy over time
-(1960 - 2024). In these changing maps, we can also see the
-same pattern as in 2024.
+These maps show the GDP per capita and the World Liberal Democracy of the entire world in 2024. When comparing these maps side by side, we can see that in countries that are more democratic, we also see a better GDP per capita. When you scan the QR codes, you can also see the change in GDP per Capita and World Liberal Democracy over time (1960 - 2024). In these changing maps, we can also see the same pattern as in 2024.
+
+```{r gdp-2024-map Eval = FALSE}
+year_to_plot <- 2024
+map_data_year <- df |> 
+  filter(year == year_to_plot)
+
+world <- ne_countries(scale = "medium", returnclass = "sf")
+
+world_data <- world %>%
+  left_join(map_data_year, by = c("iso_a3" = "country_text_id"))
+
+ggplot(data = world_data) +
+  geom_sf(aes(fill = gdppc), color = "gray30", size = 0.2) +
+  scale_fill_viridis_c(na.value = "lightgray",
+                       name = "GDP per Capita") +
+  labs(
+    title = paste("World GDP per Capita in", year_to_plot)
+  ) +
+  theme_minimal() +
+  theme(
+  axis.text = element_blank(),
+  axis.ticks = element_blank(),
+  legend.position = "left",
+  plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+)
+```
+
+``` {r gdppc-across-time-map Eval = FALSE}
+
+world <- ne_countries(scale = "medium", returnclass = "sf")
+
+df_clean <- df %>%
+  filter(year >= 1960, year <= 2024)
+
+world_data <- world %>%
+  left_join(df_clean, by = c("iso_a3" = "iso3c"))
+
+p <- ggplot(world_data) +
+  geom_sf(aes(fill = gdppc), color = "gray30", size = 0.2) +
+  scale_fill_viridis_c(
+    option = "plasma",
+    na.value = "lightgray",
+    name = "GDP per Capita",
+    limits = c(0, 100000),   
+  ) +
+  labs(
+    title = "World GDP per Capita",
+    caption = "Source: V-Dem Dataset v13; World Bank WDI"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text = element_blank(),
+  axis.ticks = element_blank(),
+    legend.position = "left",
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+  ) +
+  transition_states(
+    year,
+    transition_length = 1,
+    state_length = 1
+  ) +
+  ease_aes("linear")
+
+animate(
+  p,
+  nframes = 200,
+  fps = 10,
+  width = 900,
+  height = 600,
+  renderer = av_renderer("world_gdppc_1960_2024.mp4")
+)
+```
 
 
+```{r libdem-2024-map Eval = FALSE}
+year_to_plot <- 2024
+map_data_year <- df |> 
+  filter(year == year_to_plot)
 
+world <- ne_countries(scale = "medium", returnclass = "sf")
+
+world_data <- world %>%
+  left_join(map_data_year, by = c("iso_a3" = "country_text_id"))
+
+ggplot(data = world_data) +
+  geom_sf(aes(fill = libdem), color = "gray30", size = 0.2) +
+  scale_fill_viridis_c(na.value = "lightgray",
+                       name = "Liberal Dem. Index") +
+  labs(
+    title = paste("World Liberal Democracy in", year_to_plot)
+  ) +
+  theme_minimal() +
+  theme(
+  axis.text = element_blank(),
+  axis.ticks = element_blank(),
+  legend.position = "left",
+  plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+)
+```
+
+``` {r libdem-across-time-map Eval = FALSE}
+world <- ne_countries(scale = "medium", returnclass = "sf")
+
+df <- df %>%
+  filter(year >= 1960 & year <= 2024)
+
+world_data <- world %>%
+  left_join(df, by = c("iso_a3" = "iso3c"))
+
+p <- ggplot(world_data) +
+  geom_sf(aes(fill = libdem), color = "gray30", size = 0.2) +
+  scale_fill_viridis_c(
+    option = "plasma",
+    na.value = "lightgray",
+    name = "Liberal Democracy Rating"
+  ) +
+  labs(
+    title = "World Liberal Democracy Rating: {closest_state}",
+    caption = "Source: V-Dem Dataset v13"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text = element_blank(),
+  axis.ticks = element_blank(),
+    legend.position = "left",
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+  ) +
+  transition_states(
+    year,
+    transition_length = 1,
+    state_length = 1
+  ) +
+  ease_aes("linear")
+
+animate(
+  p,
+  nframes = 200,
+  fps = 10,
+  width = 900,
+  height = 600,
+  renderer = av_renderer("world_libdem_rating_1960_2024.mp4")
+)
+```
+
+As you see, the years used in this plot are from 1960 to 2024. This years are not a product of arbitrary decision but of the data limitations. While the V-Dem dataset extend beyond that range, WDI dataset only provides 1960-2024. Moreover, we chose to represent the whole map in 2024 for it is the most recent year available in the data, and having the recent year represented is the least arbitrary, as one relates more to recent than the old conditions.
 
 ### Plot 3: Positive Relationship between Democracy and Economy (1960–2024)
 
-These plots show the bivariate relationship between the
-percentile of indices of democracy and GDP per capita. We
-can observe here a strong positive relationship between
-economy and democracy. Moreover, the concentration in
-the lower right of each plot shows what scholars call
-resource course, where because states have high amount
-of resources, they become less dependent on the people.
+These plots show the bivariate relationship between the percentile of indices of democracy and GDP per capita. We can observe here a strong positive relationship between
+economy and democracy. Moreover, the concentration in the lower right of each plot shows what scholars call resource course, where because states have high amount of resources, they become less dependent on the people.
 
-``` {r Relation_plot}
-
+``` {r Relation_plot Eval = FALSE}
 df_percentiles <- df %>%
   mutate(
     `GDP Per Capita` = percent_rank(gdppc),
@@ -279,5 +416,12 @@ ggsave(filename = "output/Democracy_vs_Economy_Bin2d.png",
        height = 6)
 ```
 
+In this plot, we decided to use each observation's percentile. Doing so allows us to show the relationship without accounting for skewed data (e.g., by log). It also standardizes the measures (i.e., from 0th to 100th).
 
+## Conclusions and Limitations
 
+In this project, we ask whether economy has effects on democracy. We use two datasets involving robust democracy and economy measures. Our visualization suggests that economy heavily influences democracy. That is, as economy rise, so does democracy in aggregate level. This is a strong visualization in support of fundamental theories in comparative politics, including economic modernization theory. 
+
+Although we find that economy influences democracy, the plots alone do not show the causal mechanism driving this influence. It may also be the case that democracy predicts economy as we show in `Plot 1`. One necessary method to establish such claims is to use econometric models; however, doing so would go beyond the project's scope. 
+
+Nonetheless, this project shows the important role of economy in democratization or democracy in economic growth. 
