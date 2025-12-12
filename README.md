@@ -1,6 +1,6 @@
 How Economy Influences Democracy
 ================
-by Fantastic Four (RB Raya, Keagan Ryan, Ian del rio viera, Bravo Nie)
+by Fantastic Four (RB Raya, Keagan Ryan, Ian Del Rio Viera, Bravo Nie)
 
 ## Summary
 
