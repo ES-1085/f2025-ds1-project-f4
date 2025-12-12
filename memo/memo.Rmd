@@ -141,9 +141,9 @@ These data cleaning sections are optional and depend on if you have some data cl
 
 
 #### Final Plot 1
-This graph shows the change in Democracy and GDP per capita over time. We can see that after the Third Wave of Democratization, which shifted from authoritarian regimes to democratic governments, there is an almost instant increase in democratization, shortly followed by a rise in GDP per capita. This data shows that once a country has become more democratic, its economy begins to increase shortly after.
+This plot shows the change in Democracy and GDP per capita over time. We can see that after the Third Wave of Democratization, which shifted from authoritarian regimes to democratic governments, there is an almost instant increase in democratization, shortly followed by a rise in GDP per capita. This data shows that once a country has become more democratic, its economy begins to increase shortly after.
 
-```{r curve_plot}
+```{r line-plot, fig.alt = “Line plot of aggregated countries' median indices of democracy and GDP per capita from 1960 to 2024 with annotation of Third Wave Democratization. The growth of democracy is associated with economic growth.”}
 df_year <- df %>%
   group_by(year) %>%
   summarise(
@@ -226,7 +226,7 @@ In this plot, we use median as the measure of central tendency. This decision is
 Since it take so much time to knit when generating mp4 files. We put the output link overhere. See over here: <https://drive.google.com/file/u/0/d/1QzBOESqxSqmxjJ7EiKZybSGOcYg-OGwN/view?usp=sharing&pli=1>
 These maps show the GDP per capita and the World Liberal Democracy of the entire world in 2024. When comparing these maps side by side, we can see that in countries that are more democratic, we also see a better GDP per capita. When you scan the QR codes, you can also see the change in GDP per Capita and World Liberal Democracy over time (1960 - 2024). In these changing maps, we can also see the same pattern as in 2024.
 
-```{r gdp-2024-map Eval = FALSE}
+```{r gdp-2024-map Eval = FALSE, fig.alt = “Choropleth map of GDP per capita in 2024. Economic growth is associated with Global North as opposed to Global South.”}
 year_to_plot <- 2024
 map_data_year <- df |> 
   filter(year == year_to_plot)
@@ -252,7 +252,7 @@ ggplot(data = world_data) +
 )
 ```
 
-``` {r gdppc-across-time-map Eval = FALSE}
+``` {r gdppc-across-time-map Eval = FALSE, fig.alt = “Choropleth map of GDP per capita over time, from 1960 to 2024. Economy has been growing for many countries since 1960.”}
 
 world <- ne_countries(scale = "medium", returnclass = "sf")
 
@@ -299,7 +299,7 @@ animate(
 ```
 
 
-```{r libdem-2024-map Eval = FALSE}
+```{r libdem-2024-map Eval = FALSE, fig.alt = “Choropleth map of Liberal Democracy index. North and South America, along with Europe and Oceania, are the most demoratic in terms of liberal democracy, while Africa and Asia are less democratic”}
 year_to_plot <- 2024
 map_data_year <- df |> 
   filter(year == year_to_plot)
@@ -325,7 +325,7 @@ ggplot(data = world_data) +
 )
 ```
 
-``` {r libdem-across-time-map Eval = FALSE}
+``` {r libdem-across-time-map Eval = FALSE, fig.alt = “Choropleth map of Liberal Democracy index over time, from 1960 to 2024. Liberal democracy has been growing for many countries since 1960.”}
 world <- ne_countries(scale = "medium", returnclass = "sf")
 
 df <- df %>%
@@ -376,7 +376,7 @@ As you see, the years used in this plot are from 1960 to 2024. This years are no
 These plots show the bivariate relationship between the percentile of indices of democracy and GDP per capita. We can observe here a strong positive relationship between
 economy and democracy. Moreover, the concentration in the lower right of each plot shows what scholars call resource course, where because states have high amount of resources, they become less dependent on the people.
 
-``` {r Relation_plot Eval = FALSE}
+``` {r Relation_plot Eval = FALSE, fig.alt = “Heat map of GDP per capita and democracy indices percentile, from 1960 to 2024. Economy and democracy in all indices show a strong positive correlation, with high concentrations in the upper right.”}
 df_percentiles <- df %>%
   mutate(
     `GDP Per Capita` = percent_rank(gdppc),
