@@ -4,13 +4,15 @@ by Fantastic Four (RB Raya, Keagan Ryan, Ian Del Rio Viera, Bravo Nie)
 
 ## Summary
 
+### Introduction
 This project deals with economy and regime. Specifically, we inquire on the relationship between countries’ economy and their regime. We ask how a country’s economy determines its regime measured in democracy and dictatorship continuum. We use regime and economic indicators collected from the Varieties of Democracy (V-Dem) dataset and World Development Indicators (WDI) dataset of the World Bank, respectively. V-Dem provides the five indices of democracies, while WDI provides economic indicator measured in GDP per capita.
 
+### Research Questions
 (1) What is the relationship between democracy and economy? 
 (2) What historically relevant events one notices that affect both the economy and regime?
 (3) Can it be that the regime determines the economy?
 
-Definitions of Democracy Indices
+### Democracy Indices
 
 (1) Polyarchy, also known as electoral democracy, is the extent to which elections are free, fair, and inclusive, and whether key democratic institutions allow citizens to choose their leaders meaningfully.
 
@@ -24,13 +26,17 @@ Definitions of Democracy Indices
 
 These measures are the product of a series of questions answered by experts of about five in each country. These questions are then turned into indices using Bayesian aggregation. These measures are important in representing democracy as they capture the different and often debated definitions of democracy.
 
+### Results 
+
 In the Democracy & Economy Overtime graph, it is clear to see the change in Democracy and GDP per capita over time. We can see that after the Third Wave of Democratization, which shifted from authoritarian regimes to democratic governments, there is an almost instant increase in democratization, shortly followed by a rise in GDP per capita. This data shows that once a country has become more democratic, its economy begins to increase shortly after.
 
 The Evolution of Democracy & Economy maps show the GDP per capita and the World Liberal Democracy of the entire world in 2024. When comparing these maps side by side, we can see that in countries that are more democratic, we also see a better GDP per capita.  When you scan the QR codes, you can also see the change in GDP per Capita and World Liberal Democracy over time (1960 - 2024). In these changing maps, we can also see the same pattern as in 2024.
 
 The Relationship Between Democracy & Economy plots show the bivariate relationship between the percentile of indices of democracy and GDP per capita. We can observe here a strong positive relationship between economy and democracy. Moreover, the concentration in the lower right of each plot shows what scholars call resource course, where because states have high amount of resources, they become less dependent on the people.
 
-In future research methods, it would be very helpful to develop an analysis for causal inference. This would assist researchers in understanding the depth of GDP per capita around the world on specific regimes going beyond correlations and accounting for even more causal activity.
+### Conclusions
+
+We conclude that there is a strong positive relationship between democracy and economy. However, we cannot determine which causes which. On the one hand, it could be that democracy causes economy. On the other hand, it could be that economy causes democracy. As such, in future research methods, it would be helpful to develop an analysis for causal inference. This would assist researchers in understanding the depth of GDP per capita around the world on specific regimes going beyond correlations and accounting for even more causal activity.
 
 ## Handout
 
