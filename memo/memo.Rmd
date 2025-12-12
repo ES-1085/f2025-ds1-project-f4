@@ -1,6 +1,6 @@
 ---
-title: "Project memo"
-author: "Team name"
+title: "How Economy Influences Democracy"
+author: "Fantastic 4"
 output: github_document
 ---
 
